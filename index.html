@@ -3283,12 +3283,8 @@ if (kamekappears === true && laserTimer < 11.25){
 function pauseGame() {
     isPaused = !isPaused; // Toggle the paused state
 }
-
-
-
 function draw() {
-    // Function to clear a specific area
-    function clearArea(x, y, width, height) {
+    // Function to clear a specific areafunction clearArea(x, y, width, height) {
     ctx.save();
     ctx.beginPath();
     ctx.rect(x * gridSize, y * gridSize, width * gridSize, height * gridSize);
@@ -3299,16 +3295,36 @@ function draw() {
 
 // Clear and update the areas that need to be redrawn
 function clearAndDrawObstacles(obstacles, color) {
-    ctx.fillStyle = color;
-    ctx.globalCompositeOperation = 'source-over'; // Set composite operation for transparency
-    ctx.globalAlpha = 0.5; // Set the desired transparency level (0.0 to 1.0)
+    ctx.save(); // Save the current context state
 
     obstacles.forEach(obstacle => {
         clearArea(obstacle.x, obstacle.y, 1, 1);
+
+        ctx.globalCompositeOperation = 'source-over';
+        ctx.fillStyle = color;
         ctx.fillRect(obstacle.x * gridSize, obstacle.y * gridSize, gridSize, gridSize);
+
+        // Check if the color has an alpha value less than 1 (partially transparent)
+        const alpha = getAlphaFromColor(color);
+        if (alpha < 1) {
+            ctx.globalCompositeOperation = 'destination-in';
+            ctx.globalAlpha = alpha;
+            ctx.fillRect(obstacle.x * gridSize, obstacle.y * gridSize, gridSize, gridSize);
+        }
     });
 
-    ctx.globalAlpha = 1.0; // Reset alpha to default
+    ctx.restore(); // Restore the context state
+}
+
+// Helper function to extract alpha value from a CSS color string (rgba format)
+function getAlphaFromColor(color) {
+    if (color.startsWith('rgba')) {
+        const match = color.match(/rgba\(\d+,\d+,\d+,\s*([\d.]+)\)/);
+        if (match) {
+            return parseFloat(match[1]);
+        }
+    }
+    return 1; // Default to fully opaque if not rgba
 }
 
 
@@ -4933,18 +4949,14 @@ obstacles.forEach((obstacle, obstacleIndex) => {
     })
 }
 
-
 if ((controltype === 'set' || controltype === 'arrow') && controltype !== 'mobile') {
     // Handle arrow key presses
     document.addEventListener('keydown', event => {
         // If a control scheme is already set, return early
         if (firstControlSchemeSet && controltype !== 'arrow') return;
-
-        // Prevent default arrow key behavior (scrolling)
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(event.key)) {
             event.preventDefault();
         }
-
         if (!isPaused) {
             switch (event.key) {
                 case 'ArrowUp':
@@ -4975,28 +4987,21 @@ if ((controltype === 'set' || controltype === 'arrow') && controltype !== 'mobil
         }
     });
 }
-
 if ((controltype === 'set' || controltype === 'mobile') && controltype !== 'arrow') {
     if (!isPaused) {
         // Handle touch events for mobile controls
         let touchStartX = 0;
         let touchStartY = 0;
-
         function handleTouchStart(event) {
-            // If a control scheme is already set, return early
             if (firstControlSchemeSet && controltype !== 'mobile') return;
-
             touchStartX = event.touches[0].clientX;
             touchStartY = event.touches[0].clientY;
         }
-
         function handleTouchEnd(event) {
             // If a control scheme is already set, return early
             if (firstControlSchemeSet && controltype !== 'mobile') return;
-
             const touchEndX = event.changedTouches[0].clientX;
             const touchEndY = event.changedTouches[0].clientY;
-
             const deltaX = touchEndX - touchStartX;
             const deltaY = touchEndY - touchStartY;
             if (Math.abs(deltaX) > Math.abs(deltaY)) {
@@ -5010,7 +5015,6 @@ if ((controltype === 'set' || controltype === 'mobile') && controltype !== 'arro
                     controltype = 'mobile';
                 }
             }
-            // Perform actions based on direction if needed
             if (!firstControlSchemeSet) {
                 firstControlSchemeSet = true;
             }
@@ -5019,9 +5023,7 @@ if ((controltype === 'set' || controltype === 'mobile') && controltype !== 'arro
         canvas.addEventListener('touchend', handleTouchEnd);
     }
 }
-        // Start the game loop
-        let gameInterval = setInterval(gameLoop, 100); // Adjust the interval as needed
-
+        let gameInterval = setInterval(gameLoop, 100); 
 function changeInterval(interval) {
     clearInterval(gameInterval);
     gameInterval = setInterval(gameLoop, interval);
@@ -5075,13 +5077,11 @@ window.addEventListener('resize', getZoomFactor);
     canvas.addEventListener('touchstart', PauseHoldStart) 
 let touchStartTime; // Variable to store the time when touch starts
 canvas.addEventListener('touchstart', PauseHoldStart); // Listen for touchstart event
-
 // Function to handle touchstart event
 function PauseHoldStart(event) {
     touchStartTime = new Date().getTime(); // Record the time when touch starts
     setTimeout(checkHold, pausetimer); // Check after 1.5 seconds if the touch is still held
 }
-
 // Function to check if touch is still held after 1.5 seconds
 function checkHold() {
     // Check if touch is still active and hasn't moved for 1.5 seconds
