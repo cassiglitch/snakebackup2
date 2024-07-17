@@ -3289,22 +3289,28 @@ function pauseGame() {
 function draw() {
     // Function to clear a specific area
     function clearArea(x, y, width, height) {
-        ctx.save();
-        ctx.beginPath();
-        ctx.rect(x * gridSize, y * gridSize, width * gridSize, height * gridSize);
-        ctx.clip();
-        ctx.clearRect(x * gridSize, y * gridSize, width * gridSize, height * gridSize);
-        ctx.restore();
-    }
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(x * gridSize, y * gridSize, width * gridSize, height * gridSize);
+    ctx.clip();
+    ctx.clearRect(x * gridSize, y * gridSize, width * gridSize, height * gridSize);
+    ctx.restore();
+}
 
-    // Clear and update the areas that need to be redrawn
-    function clearAndDrawObstacles(obstacles, color) {
-        ctx.fillStyle = color;
-        obstacles.forEach(obstacle => {
-            clearArea(obstacle.x, obstacle.y, 1, 1);
-            ctx.fillRect(obstacle.x * gridSize, obstacle.y * gridSize, gridSize, gridSize);
-        });
-    }
+// Clear and update the areas that need to be redrawn
+function clearAndDrawObstacles(obstacles, color) {
+    ctx.fillStyle = color;
+    ctx.globalCompositeOperation = 'source-over'; // Set composite operation for transparency
+    ctx.globalAlpha = 0.5; // Set the desired transparency level (0.0 to 1.0)
+
+    obstacles.forEach(obstacle => {
+        clearArea(obstacle.x, obstacle.y, 1, 1);
+        ctx.fillRect(obstacle.x * gridSize, obstacle.y * gridSize, gridSize, gridSize);
+    });
+
+    ctx.globalAlpha = 1.0; // Reset alpha to default
+}
+
 
     // Clear the entire background
     ctx.save();
