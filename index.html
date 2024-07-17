@@ -196,12 +196,22 @@ let physicsActive = false;  // Flag to activate physics on collision
 let ghostcolor = '#1F635780'
         let windactive = false
        let windeffect = [{x:5,y:5}];
+function addWindEffect() {
+  snake.forEach(segment => {
+    for (let dx = -3; dx <= 3; dx++) {
+      for (let dy = -3; dy <= 3; dy++) {
+        // Calculate the position for the wind effect
+        let windPosition = {x: segment.x + dx, y: segment.y + dy};
 
-// Function to add wind effects around each snake segment
-
-        
-
-function windElement(snake, ...arrays) {
+        // Check if this position is already in the windeffect array
+        if (!windeffect.some(pos => pos.x === windPosition.x && pos.y === windPosition.y)) {
+          // If not, add it to the array
+          windeffect.push(windPosition);
+        }
+      }
+    }
+  });
+}function windElement(snake, ...arrays) {
     if (!windactive) return;
 
     const distanceThreshold = 5;
@@ -4726,9 +4736,9 @@ function animateExplosion() {
             update();
             windElement(snake, mirrors, obstacles, dynamicObstacles, thwomps, reflector);
             draw()
-                    
+               windeffect = []     
 if (windactive === true){
-
+addWindEffect()
 }
             physicsActive = false;
                         if (kamek.length === 0 && firelord.length === 0 && icelord.length === 0 && lightninglord.length === 0 && earthlord.length === 0) {
