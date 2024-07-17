@@ -214,7 +214,7 @@ function addWindEffect() {
 }function windElement(snake, ...arrays) {
     if (!windactive) return;
 
-    const distanceThreshold = 5;
+    const distanceThreshold = 3;
 
     function isWithinDistance(coord1, coord2, distance) {
         return Math.abs(coord1.x - coord2.x) <= distance && Math.abs(coord1.y - coord2.y) <= distance;
@@ -3364,7 +3364,8 @@ function getAlphaFromHexColor(color) {
             drawGoomba(goomba.x, goomba.y);
         });
     }
-
+clearAndDrawObstacles(windeffect, '#90EE9080');
+    
     // Draw invincibility auras
     if (isInvincible) {
         drawInvincibilityAura('orange');
@@ -3446,8 +3447,7 @@ function getAlphaFromHexColor(color) {
     // Draw other obstacles
     clearAndDrawObstacles(obstacles, 'black');
     clearAndDrawObstacles(timezone, 'lightgreen');
-    clearAndDrawObstacles(reflector, '#5B8DFF');
-    clearAndDrawObstacles(windeffect, '#90EE9080');
+    clearAndDrawObstacles(reflector, '#5B8DFF')
 
     chaosLord.forEach(firelord => {
         clearArea(firelord.x, firelord.y, 1, 1);
